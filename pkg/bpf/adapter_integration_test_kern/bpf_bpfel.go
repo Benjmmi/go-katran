@@ -54,6 +54,7 @@ type bpfSpecs struct {
 //
 // It can be passed ebpf.CollectionSpec.Assign.
 type bpfProgramSpecs struct {
+	Pktcntr *ebpf.ProgramSpec `ebpf:"pktcntr"`
 }
 
 // bpfMapSpecs contains maps before they are loaded into the kernel.
@@ -98,10 +99,13 @@ func (m *bpfMaps) Close() error {
 //
 // It can be passed to loadBpfObjects or ebpf.CollectionSpec.LoadAndAssign.
 type bpfPrograms struct {
+	Pktcntr *ebpf.Program `ebpf:"pktcntr"`
 }
 
 func (p *bpfPrograms) Close() error {
-	return _BpfClose()
+	return _BpfClose(
+		p.Pktcntr,
+	)
 }
 
 func _BpfClose(closers ...io.Closer) error {
