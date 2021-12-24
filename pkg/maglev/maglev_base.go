@@ -1,7 +1,6 @@
 package maglev
 
 import (
-	"github.com/go-katran/pkg/ch_helpers"
 	"github.com/go-katran/pkg/util"
 )
 
@@ -12,9 +11,30 @@ const (
 	kHashSeed3 = 2718281828
 )
 
+/**
+ * struct which describes backend, each backend would have unique number,
+ * weight (the measurment of how often we would see this endpoint
+ * on CH ring) and hash value, which will be used as a seed value
+ * (it should be unique value per endpoint for CH to work as expected)
+ */
+type Endpoint struct {
+	Num    uint32 `json:"num"`
+	Weight uint32 `json:"weight"`
+	Hash   uint64 `json:"hash"`
+}
+
+/**
+ * ConsistentHash implements interface, which is used by CHFactory class to
+ * generate hash ring
+ */
+type ConsistentHash interface {
+	// GenerateHashRing endpoints, ring_size default 65537
+	GenerateHashRing(endpoints []Endpoint, ring_size int) []int
+}
+
 type MaglevBase interface {
-	ch_helpers.ConsistentHash
-	GenMaglevPermutation(permutation []uint32, endpoint ch_helpers.Endpoint, pos, ring_size uint32)
+	ConsistentHash
+	GenMaglevPermutation(permutation []uint32, endpoint Endpoint, pos, ring_size uint32)
 }
 
 type MaglevBaseImpl struct {
@@ -22,7 +42,7 @@ type MaglevBaseImpl struct {
 }
 
 func (m MaglevBaseImpl) GenMaglevPermutation(permutation []uint32,
-	endpoint ch_helpers.Endpoint, pos, ring_size uint32) {
+	endpoint Endpoint, pos, ring_size uint32) {
 	offset_hash := util.MurmurHash3_x64_64(endpoint.Hash, kHashSeed2, kHashSeed0)
 	offset := offset_hash % uint64(ring_size)
 	skip_hash := util.MurmurHash3_x64_64(endpoint.Hash, kHashSeed3, kHashSeed1)

@@ -1,17 +1,17 @@
 package maglev
 
 import (
-	"fmt"
 	"github.com/go-katran/pkg/ch_helpers"
+	"github.com/go-katran/pkg/maglev"
 	"sort"
 	"testing"
 )
 
 // 检查是否与 C++ 实现的结果一致
 func Test(t *testing.T) {
-	endpoints := []ch_helpers.Endpoint{}
-	freq := []uint32{400, 0}
-	var endpoint ch_helpers.Endpoint
+	endpoints := []maglev.Endpoint{}
+	freq := make([]uint32, 400)
+	var endpoint maglev.Endpoint
 	var n1 float64 = 0
 	var n2 float64 = 0
 
@@ -39,8 +39,8 @@ func Test(t *testing.T) {
 	sorted_freq := []uint32{}
 	sorted_freq = append(sorted_freq, freq...)
 	sort.Slice(sorted_freq, func(i, j int) bool { return sorted_freq[i] < sorted_freq[j] })
-	fmt.Println("min freq is ", sorted_freq[0], " max freq is ", sorted_freq[len(sorted_freq)-1])
-	fmt.Println("p95 w: ", sorted_freq[(len(sorted_freq)/20)*19], "\np75 w: ", sorted_freq[(len(sorted_freq)/20)*15], "\np50 w: ", sorted_freq[len(sorted_freq)/2], "\np25 w: ", sorted_freq[len(sorted_freq)/4], "\np5 w: ", sorted_freq[len(sorted_freq)/20])
+	t.Log("min freq is ", sorted_freq[0], " max freq is ", sorted_freq[len(sorted_freq)-1])
+	t.Log("p95 w: ", sorted_freq[(len(sorted_freq)/20)*19], "\np75 w: ", sorted_freq[(len(sorted_freq)/20)*15], "\np50 w: ", sorted_freq[len(sorted_freq)/2], "\np25 w: ", sorted_freq[len(sorted_freq)/4], "\np5 w: ", sorted_freq[len(sorted_freq)/20])
 	for i := 0; i < len(ch1); i++ {
 		if ch1[i] != ch2[i] {
 			if ch1[i] == deleted_real_num {
@@ -50,5 +50,6 @@ func Test(t *testing.T) {
 			n2++
 		}
 	}
-	fmt.Println("changes for affected real: ", n1, "; and for not affected ", n2, " this is: ", (int(n2) / len(ch1) * 100), "%\n")
+	t.Log("changes for affected real: ", n1, "; and for not affected ", n2)
+	t.Log(" this is: ", (int(n2) / len(ch1) * 100), "%")
 }

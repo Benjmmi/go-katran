@@ -1,13 +1,15 @@
 package maglev
 
-import "github.com/go-katran/pkg/ch_helpers"
-
 type MaglevHash struct {
 	MaglevBaseImpl
 }
 
-func (m MaglevHash) GenerateHashRing(endpoints []ch_helpers.Endpoint, ring_size int) []int {
-	result := []int{ring_size, -1}
+func (m MaglevHash) GenerateHashRing(endpoints []Endpoint, ring_size int) []int {
+	result := make([]int, ring_size)
+	for i := range result {
+		result[i] = -1
+	}
+
 	if len(endpoints) == 0 {
 		return result
 	} else if len(endpoints) == 1 {
@@ -17,8 +19,8 @@ func (m MaglevHash) GenerateHashRing(endpoints []ch_helpers.Endpoint, ring_size 
 		return result
 	}
 	runs := uint32(0)
-	permutation := []uint32{uint32(len(endpoints) * 2), 0}
-	next := []uint32{uint32(len(endpoints)), 0}
+	permutation := make([]uint32, len(endpoints)*2)
+	next := make([]uint32, len(endpoints))
 
 	for i := 0; i < len(endpoints); i++ {
 		m.GenMaglevPermutation(permutation, endpoints[i], uint32(i), uint32(ring_size))
