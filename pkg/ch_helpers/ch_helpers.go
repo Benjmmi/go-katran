@@ -16,9 +16,9 @@ const (
  * (it should be unique value per endpoint for CH to work as expected)
  */
 type Endpoint struct {
-	Num    int `json:"num"`
-	Weight int `json:"weight"`
-	Hash   int `json:"hash"`
+	Num    uint32 `json:"num"`
+	Weight uint32 `json:"weight"`
+	Hash   uint64 `json:"hash"`
 }
 
 /**
