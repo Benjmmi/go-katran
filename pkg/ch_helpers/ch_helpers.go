@@ -2,11 +2,11 @@ package ch_helpers
 
 import "github.com/go-katran/pkg/maglev"
 
-type HashFunction int
+type hashFunction int
 
 const (
-	Maglev   HashFunction = 1
-	MaglevV2 HashFunction = 2
+	Maglev   hashFunction = 1
+	MaglevV2 hashFunction = 2
 )
 
 /**
@@ -26,10 +26,11 @@ type Endpoint struct {
  * generate hash ring
  */
 type ConsistentHash interface {
+	// GenerateHashRing endpoints, ring_size default 65537
 	GenerateHashRing(endpoints []Endpoint, ring_size int) []int
 }
 
-func CHFactoryMake(functoin HashFunction) ConsistentHash {
+func CHFactoryMake(functoin hashFunction) ConsistentHash {
 	switch functoin {
 	case Maglev:
 		return &maglev.MaglevHash{}
